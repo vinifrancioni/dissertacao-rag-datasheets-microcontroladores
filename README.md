@@ -19,7 +19,6 @@
 <br>
 
 | 🧩 **456** microcontroladores | ❓ **2.736** perguntas | 🏭 **9** fabricantes | 🧪 **4** categorias de teste |
-|:---:|:---:|:---:|:---:|:---:|
 
 </div>
 
