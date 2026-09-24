@@ -4,8 +4,7 @@
 
 **Avaliação de modelos de linguagem na extração de especificações técnicas de microcontroladores,<br>com e sem RAG, com e sem instrução.**
 
-<!-- TODO: substituir pelo título da dissertação, programa e instituição -->
-*Código da dissertação de mestrado — [Avaliação da Ocorrência de Alucinações em LLMs e RAG como Técnica de Mitigação, no Contexto de Datasheets de Microcontroladores] · [PPGESE] · [UFSC]*
+[Avaliação da Ocorrência de Alucinações em LLMs e RAG como Técnica de Mitigação, no Contexto de Datasheets de Microcontroladores] · [PPGESE] · [UFSC]*
 
 <br>
 
@@ -181,9 +180,8 @@ pip install -r requirements.txt
 ollama pull qwen3-embedding
 ```
 
-<!-- TODO: ajustar o link conforme o local escolhido para os datasheets (Release do GitHub ou Zenodo) -->
 > [!NOTE]
-> **Datasheets:** os PDFs (~1,2 GB) estão disponíveis em [`datasheets_pdf.zip`](../../releases). Extraia o arquivo na raiz do repositório, na pasta `datasheets_pdf/`.
+> **Datasheets:** os PDFs (~1,2 GB) estão disponíveis em [`datasheets_pdf.zip`]. Extraia o arquivo na raiz do repositório, na pasta `datasheets_pdf/`.
 
 > [!IMPORTANT]
 > O banco vetorial é criado a partir dos datasheets **em HTML**, lidos da pasta `datasheets_html/`. A conversão dos PDFs para HTML é uma etapa externa e **não faz parte deste repositório**.
