@@ -29,7 +29,6 @@
 
 - [Sobre o projeto](#-sobre-o-projeto)
 - [Desenho experimental](#-desenho-experimental)
-- [Fluxo de execução](#-fluxo-de-execução)
 - [Estrutura do repositório](#-estrutura-do-repositório)
 - [Instalação](#-instalação)
 - [Configuração das chaves de API](#-configuração-das-chaves-de-api)
@@ -76,15 +75,13 @@ As duas variantes de instrução de uma mesma pergunta usam **exatamente o mesmo
 
 ### 🤖 Modelos avaliados
 
-| Modelo | Provedor | Sem RAG | Com RAG |
-|---|---|:-:|:-:|
-| `gemini-2.5-flash` | Google Gemini | ✅ | ✅ |
-| `microsoft/phi-4-mini-instruct` | NVIDIA NIM | | ✅ |
-| `openai/gpt-oss-20b` | NVIDIA NIM | ✅ |✅|
-| `@cf/meta/llama-4-scout-17b-16e-instruct` | Cloudflare Workers AI | ✅ |✅|
-| `@cf/meta/llama-3.3-70b-instruct-fp8-fast` | Cloudflare Workers AI | ✅ |✅|
-| `@cf/mistralai/mistral-small-3.1-24b-instruct` | Cloudflare Workers AI | ✅ |✅|
-| `@cf/google/gemma-3-12b-it` | Cloudflare Workers AI | ✅ |✅|
+| Modelo | Provedor
+|---|---
+| `gemini-2.5-flash` | Google Gemini 
+| `microsoft/phi-4-mini-instruct` | NVIDIA NIM 
+| `openai/gpt-oss-20b` | NVIDIA NIM
+| `@cf/meta/llama-4-scout-17b-16e-instruct` |  NVIDIA NIM
+| `@cf/mistralai/mistral-small-3.1-24b-instruct` | NVIDIA NIM
 
 <details>
 <summary><b>⚙️ Parâmetros do RAG</b></summary>
@@ -105,41 +102,6 @@ O filtro usa o *part number* citado na pergunta (ex.: `ATMEGA328P`, `STM32F103`)
 </details>
 
 ---
-
-## 🔄 Fluxo de execução
-
-```mermaid
-flowchart TD
-    XLSX[("📊 microcontroladores-populares.xlsx<br/>456 MCUs × 6 perguntas")]
-    PDF[("📄 datasheets_pdf/<br/>268 PDFs")]
-
-    subgraph SEM ["🧠 Sem RAG"]
-        A["script-unificado.ipynb<br/>geração + extração"]
-    end
-
-    subgraph COM ["📚 Com RAG"]
-        H["datasheets_html/"]
-        B0["1. script_rag_v3_html.ipynb<br/>célula 0 · cria o banco vetorial"]
-        DB[("🗄️ vector_db_v3<br/>ChromaDB")]
-        B["1. script_rag_v3_html.ipynb<br/>células 2 e 3 · geração"]
-        C["2. extracao.ipynb<br/>extração do valor"]
-    end
-
-    J["🔗 junta_resultados.py"]
-    AV["✅ avalia_respostas_rag.py<br/>critério único (Pint)"]
-    PL["📈 plota_histogramas.py"]
-    OUT[/"histogramas_modelos.pdf<br/>resumo_modelos.csv"/]
-
-    XLSX --> A
-    PDF -.->|"conversão PDF → HTML<br/>(etapa externa)"| H
-    H --> B0 --> DB --> B
-    XLSX --> B --> C
-    A -->|resultados_sem_rag.json| J
-    C -->|resultados_rag_*_extraido.json| J
-    J -->|dados_combinados_v3.json| AV --> PL --> OUT
-```
-
-A **extração** transforma a resposta livre do modelo em um valor comparável. Por exemplo, *"O ATmega328P possui 32 kilobytes de memória flash…"* vira `32KB`. Ela é feita sempre com o **`gemini-2.5-flash`** (`thinking_budget=0`), nas quatro categorias.
 
 ---
 
