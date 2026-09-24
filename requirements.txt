@@ -1,0 +1,33 @@
+# Python 3.10 ou superior
+# Instalação: pip install -r requirements.txt
+#
+# Além dos pacotes abaixo, o banco vetorial e as consultas RAG usam o Ollama rodando localmente
+# (https://ollama.com) com o modelo de embedding baixado:  ollama pull qwen3-embedding
+
+# Dados e planilha
+pandas>=2.0
+openpyxl>=3.1
+
+# APIs dos modelos de linguagem
+google-genai>=1.20      # Gemini (geração e extração)
+openai>=1.0             # NVIDIA (API compatível com OpenAI)
+requests>=2.31          # Cloudflare Workers AI
+urllib3>=2.0
+
+# RAG (1. script_rag_v3_html.ipynb)
+ollama>=0.4
+chromadb>=0.5
+langchain-text-splitters>=0.3
+unstructured>=0.15
+
+# Avaliação (avalia_respostas_rag.py)
+pint>=0.23
+
+# Gráficos e estatística (script-unificado.ipynb e plota_histogramas.py)
+plotly>=5.0
+matplotlib>=3.7
+scipy>=1.10
+ijson>=3.2
+
+# Utilidades
+tqdm>=4.0
