@@ -4,7 +4,7 @@
 
 **Avaliação de modelos de linguagem na extração de especificações técnicas de microcontroladores,<br>com e sem RAG, com e sem instrução.**
 
-[Avaliação da Ocorrência de Alucinações em LLMs e RAG como Técnica de Mitigação, no Contexto de Datasheets de Microcontroladores] · [PPGESE] · [UFSC]*
+[Avaliação da Ocorrência de Alucinações em LLMs e RAG como Técnica de Mitigação, no Contexto de Datasheets de Microcontroladores] · [PPGESE] · [UFSC]
 
 <br>
 
