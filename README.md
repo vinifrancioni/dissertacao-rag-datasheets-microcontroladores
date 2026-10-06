@@ -1,10 +1,10 @@
 <div align="center">
 
-# LLMs × Datasheets de Microcontroladores
+# LLMs × Microcontroller Datasheets
 
-**Avaliação de modelos de linguagem na extração de especificações técnicas de microcontroladores,<br>com e sem RAG, com e sem instrução.**
+**Evaluating language models at extracting technical specifications of microcontrollers,<br>with and without RAG, with and without instruction.**
 
-[Avaliação da Ocorrência de Alucinações em LLMs e RAG como Técnica de Mitigação, no Contexto de Datasheets de Microcontroladores] · [PPGESE] · [UFSC]
+[Assessment of Hallucinations in LLMs and RAG as a Mitigation Technique, in the Context of Microcontroller Datasheets] · [PPGESE] · [UFSC]
 
 <br>
 
@@ -18,63 +18,66 @@
 
 <br>
 
-| 🧩 **456** microcontroladores | ❓ **2.736** perguntas | 🏭 **9** fabricantes | 🧪 **4** categorias de teste |
+| 🧩 **456** microcontrollers | ❓ **2,736** questions | 🏭 **9** manufacturers | 🧪 **4** test categories |
 
 </div>
 
 ---
 
-## 📖 Sumário
+## 📖 Table of contents
 
-- [Sobre o projeto](#-sobre-o-projeto)
-- [Desenho experimental](#-desenho-experimental)
-- [Estrutura do repositório](#-estrutura-do-repositório)
-- [Instalação](#-instalação)
-- [Configuração das chaves de API](#-configuração-das-chaves-de-api)
-- [Como executar](#-como-executar)
-- [Critério de avaliação](#-critério-de-avaliação)
-- [Formato dos resultados](#-formato-dos-resultados)
+- [About the project](#-about-the-project)
+- [Experimental design](#-experimental-design)
+- [Repository structure](#-repository-structure)
+- [Installation](#️-installation)
+- [API key configuration](#-api-key-configuration)
+- [How to run](#️-how-to-run)
+- [Evaluation criteria](#-evaluation-criteria)
+- [Output format](#-output-format)
 
 ---
 
-## 🎯 Sobre o projeto
+## 🎯 About the project
 
-Modelos de linguagem respondem com fluência a perguntas técnicas, mas **nem sempre acertam os números**. Este projeto mede com que frequência LLMs acertam especificações de microcontroladores reais e investiga dois fatores:
+Language models answer technical questions fluently, but **they don't always get the numbers right**. This project measures how often LLMs get the specifications of real microcontrollers right and investigates two factors:
 
-- **RAG (*Retrieval-Augmented Generation*):** fornecer ao modelo trechos dos datasheets oficiais melhora a precisão?
-- **Instrução:** pedir explicitamente *"Se não souber a resposta, retorne 'Não sei'"* reduz as respostas erradas?
+- **RAG (*Retrieval-Augmented Generation*):** does giving the model excerpts from the official datasheets improve accuracy?
+- **Instruction:** does explicitly asking *"If you don't know the answer, return 'I don't know'"* reduce wrong answers?
 
-Para cada microcontrolador da base, seis perguntas são feitas aos modelos. As respostas são comparadas com os valores de referência da planilha.
+For each microcontroller in the dataset, six questions are asked to the models. The answers are compared against the reference values in the spreadsheet.
 
-| # | Pergunta (exemplo com o ATmega328P-PU) | Resposta de referência | Tipo |
+> [!NOTE]
+> All prompts were issued in **Portuguese**. The questions below are shown in English for readability.
+
+| # | Question (example with the ATmega328P-PU) | Reference answer | Type |
 |:-:|---|:-:|:-:|
-| 01 | Qual a memória flash do microcontrolador…? | `32KB` | 🔢 grandeza |
-| 02 | Qual a velocidade (clock) do microcontrolador…? | `20MHz` | 🔢 grandeza |
-| 03 | Qual a quantidade de entradas e saídas (I/O)…? | `23` | 🔢 número |
-| 04 | O microcontrolador… possui comunicação CANBus? | `Não` | ✅ sim / não |
-| 05 | O microcontrolador… possui comunicação I2C? | `Sim` | ✅ sim / não |
-| 06 | O microcontrolador… possui comunicação Ethernet? | `Não` | ✅ sim / não |
+| 01 | What is the flash memory of the microcontroller…? | `32KB` | 🔢 quantity |
+| 02 | What is the speed (clock) of the microcontroller…? | `20MHz` | 🔢 quantity |
+| 03 | How many inputs and outputs (I/O) does…have? | `23` | 🔢 number |
+| 04 | Does the microcontroller… support CAN bus communication? | `No` | ✅ yes / no |
+| 05 | Does the microcontroller… support I2C communication? | `Yes` | ✅ yes / no |
+| 06 | Does the microcontroller… support Ethernet communication? | `No` | ✅ yes / no |
 
 ---
 
-## 🧪 Desenho experimental
+## 🧪 Experimental design
 
-Cada modelo é avaliado em **quatro categorias**, resultado do cruzamento de dois fatores:
+Each model is evaluated in **four categories**, resulting from crossing two factors:
 
 <div align="center">
 
-|  | **Sem instrução** | **Com instrução** <br><sub>"Se não souber, retorne 'Não sei'"</sub> |
+|  | **Without instruction** | **With instruction** <br><sub>"If you don't know, return 'I don't know'"</sub> |
 |:---:|:---:|:---:|
-| **Sem RAG** <br><sub>só o conhecimento do modelo</sub> | `sem_rag_sem_instrucao` | `sem_rag_com_instrucao` |
-| **Com RAG** <br><sub>+ trechos dos datasheets</sub> | `com_rag_sem_instrucao` | `com_rag_com_instrucao` |
+| **Without RAG** <br><sub>model knowledge only</sub> | `sem_rag_sem_instrucao` | `sem_rag_com_instrucao` |
+| **With RAG** <br><sub>+ datasheet excerpts</sub> | `com_rag_sem_instrucao` | `com_rag_com_instrucao` |
 
 </div>
 
-As duas variantes de instrução de uma mesma pergunta usam **exatamente o mesmo contexto recuperado**. Assim, a única diferença entre elas é a instrução.
+Both instruction variants of the same question use **exactly the same retrieved context**, so the instruction is the only difference between them.
 
-### 🤖 Modelos avaliados
+### 🤖 Evaluated models
 
-| Modelo | Provedor
+| Model | Provider
 |---|---
 | `gemini-2.5-flash` | Google Gemini 
 | `microsoft/phi-4-mini-instruct` | NVIDIA NIM 
@@ -83,159 +86,157 @@ As duas variantes de instrução de uma mesma pergunta usam **exatamente o mesmo
 | `@cf/mistralai/mistral-small-3.1-24b-instruct` | NVIDIA NIM
 
 <details>
-<summary><b>⚙️ Parâmetros do RAG</b></summary>
+<summary><b>⚙️ RAG parameters</b></summary>
 
 <br>
 
-| Parâmetro | Valor |
+| Parameter | Value |
 |---|---|
-| Modelo de embedding | `qwen3-embedding` (local, via Ollama) |
-| Banco vetorial | ChromaDB, distância de cosseno |
-| Tamanho do chunk / sobreposição | 768 / 120 caracteres |
-| Candidatos recuperados | 20 |
-| Chunks enviados ao modelo | 5 (após filtrar pelo modelo do microcontrolador e remover duplicatas) |
-| Extração de texto | `unstructured` (`partition_html`) |
+| Embedding model | `qwen3-embedding` (local, via Ollama) |
+| Vector database | ChromaDB, cosine distance |
+| Chunk size / overlap | 768 / 120 characters |
+| Retrieved candidates | 20 |
+| Chunks sent to the model | 5 (after filtering by microcontroller part number and removing duplicates) |
+| Text extraction | `unstructured` (`partition_html`) |
 
-O filtro usa o *part number* citado na pergunta (ex.: `ATMEGA328P`, `STM32F103`) e dá preferência aos trechos do datasheet daquele componente. Se nenhum trecho corresponder, usa os mais similares.
+The filter uses the *part number* mentioned in the question (e.g., `ATMEGA328P`, `STM32F103`) and gives preference to chunks from that component's datasheet. If no chunk matches, the most similar ones are used.
 
 </details>
 
 ---
 
----
-
-## 📁 Estrutura do repositório
+## 📁 Repository structure
 
 ```
 .
-├── 📓 script-unificado.ipynb          # Sem RAG: pergunta aos 6 modelos (com/sem instrução) e extrai os valores
-├── 📓 1. script_rag_v3_html.ipynb     # Com RAG: cria o banco vetorial e gera as respostas (com/sem instrução)
-├── 📓 2. extracao.ipynb               # Extrai o valor das respostas com RAG (gemini-2.5-flash)
-├── 🐍 junta_resultados.py             # Junta todos os resultados em um único arquivo
-├── 🐍 avalia_respostas_rag.py         # Classifica cada resposta e resume por modelo e categoria
-├── 🐍 plota_histogramas.py            # Histogramas, boxplots e correlação tamanho × acerto
-├── 📊 microcontroladores-populares.xlsx  # Base: perguntas e respostas de referência
-├── 📄 datasheets_pdf/                 # Datasheets dos fabricantes (ver seção de instalação)
+├── 📓 script-unificado.ipynb          # Without RAG: queries the 6 models (with/without instruction) and extracts the values
+├── 📓 1. script_rag_v3_html.ipynb     # With RAG: builds the vector database and generates the answers (with/without instruction)
+├── 📓 2. extracao.ipynb               # Extracts the value from the RAG answers (gemini-2.5-flash)
+├── 🐍 junta_resultados.py             # Merges all results into a single file
+├── 🐍 avalia_respostas_rag.py         # Classifies each answer and summarizes by model and category
+├── 🐍 plota_histogramas.py            # Histograms, boxplots, and size × accuracy correlation
+├── 📊 microcontroladores-populares.xlsx  # Dataset: questions and reference answers
+├── 📄 datasheets_pdf/                 # Manufacturer datasheets (see installation section)
 └── 📦 requirements.txt
 ```
 
 ---
 
-## 🛠️ Instalação
+## 🛠️ Installation
 
-**Pré-requisitos:** Python 3.10+ e, para a parte com RAG, o [Ollama](https://ollama.com) instalado localmente.
+**Prerequisites:** Python 3.10+ and, for the RAG part, [Ollama](https://ollama.com) installed locally.
 
 ```bash
-# 1. Clone o repositório
-git clone https://github.com/<usuario>/<repositorio>.git
-cd <repositorio>
+# 1. Clone the repository
+git clone https://github.com/<user>/<repository>.git
+cd <repository>
 
-# 2. Crie e ative um ambiente virtual
+# 2. Create and activate a virtual environment
 python -m venv .venv
 source .venv/bin/activate        # Windows: .venv\Scripts\activate
 
-# 3. Instale as dependências
+# 3. Install the dependencies
 pip install -r requirements.txt
 
-# 4. Baixe o modelo de embedding (apenas para a parte com RAG)
+# 4. Download the embedding model (RAG part only)
 ollama pull qwen3-embedding
 ```
 
 > [!NOTE]
-> **Datasheets:** os PDFs (~1,2 GB) estão disponíveis em [`datasheets_pdf.zip`]. Extraia o arquivo na raiz do repositório, na pasta `datasheets_pdf/`.
+> **Datasheets:** the PDFs (~1.2 GB) are available in [`datasheets_pdf.zip`]. Extract the file at the repository root, into the `datasheets_pdf/` folder.
 
 > [!IMPORTANT]
-> O banco vetorial é criado a partir dos datasheets **em HTML**, lidos da pasta `datasheets_html/`. A conversão dos PDFs para HTML é uma etapa externa e **não faz parte deste repositório**.
+> The vector database is built from the datasheets **in HTML**, read from the `datasheets_html/` folder. Converting the PDFs to HTML is an external step and **is not part of this repository**.
 
 ---
 
-## 🔑 Configuração das chaves de API
+## 🔑 API key configuration
 
-As chaves ficam nas células de configuração dos notebooks, no lugar do texto `SUA_API_AQUI`:
+The keys go in the notebooks' configuration cells, replacing the placeholder text `SUA_API_AQUI`:
 
 
-## ▶️ Como executar
+## ▶️ How to run
 
 <table>
-<tr><th>Etapa</th><th>Comando / ação</th><th>Gera</th></tr>
-<tr><td><b>1</b> · Sem RAG</td><td>Executar todas as células de <code>script-unificado.ipynb</code></td><td><code>resultados_sem_rag.json</code><br><code>performance_sem_rag.html</code></td></tr>
-<tr><td><b>2</b> · Banco vetorial</td><td>Executar a célula 0 de <code>1. script_rag_v3_html.ipynb</code> <br><sub>processa em lotes; repita até todos os arquivos serem processados</sub></td><td><code>vector_db_v3/</code><br><code>processed_pdfs_v3.txt</code></td></tr>
-<tr><td><b>3</b> · Com RAG</td><td>Executar a célula 2 (NVIDIA) e/ou a célula 3 (Gemini) <br><sub>a célula 1 é um teste manual com uma única pergunta</sub></td><td><code>resultados_rag_&lt;modelo&gt;_v3.json</code></td></tr>
-<tr><td><b>4</b> · Extração</td><td>Executar as células de <code>2. extracao.ipynb</code></td><td><code>resultados_rag_&lt;modelo&gt;_v3_extraido.json</code></td></tr>
-<tr><td><b>5</b> · Junção</td><td><code>python junta_resultados.py</code></td><td><code>dados_combinados_v3.json</code></td></tr>
-<tr><td><b>6</b> · Avaliação</td><td><code>python avalia_respostas_rag.py</code></td><td>campo <code>correto</code> em cada resposta<br>resumo no terminal</td></tr>
-<tr><td><b>7</b> · Gráficos</td><td><code>python plota_histogramas.py</code></td><td><code>histogramas_modelos.pdf</code><br><code>resumo_modelos.csv</code></td></tr>
+<tr><th>Step</th><th>Command / action</th><th>Produces</th></tr>
+<tr><td><b>1</b> · Without RAG</td><td>Run all cells of <code>script-unificado.ipynb</code></td><td><code>resultados_sem_rag.json</code><br><code>performance_sem_rag.html</code></td></tr>
+<tr><td><b>2</b> · Vector database</td><td>Run cell 0 of <code>1. script_rag_v3_html.ipynb</code> <br><sub>processes in batches; repeat until all files are processed</sub></td><td><code>vector_db_v3/</code><br><code>processed_pdfs_v3.txt</code></td></tr>
+<tr><td><b>3</b> · With RAG</td><td>Run cell 2 (NVIDIA) and/or cell 3 (Gemini) <br><sub>cell 1 is a manual test with a single question</sub></td><td><code>resultados_rag_&lt;model&gt;_v3.json</code></td></tr>
+<tr><td><b>4</b> · Extraction</td><td>Run the cells of <code>2. extracao.ipynb</code></td><td><code>resultados_rag_&lt;model&gt;_v3_extraido.json</code></td></tr>
+<tr><td><b>5</b> · Merge</td><td><code>python junta_resultados.py</code></td><td><code>dados_combinados_v3.json</code></td></tr>
+<tr><td><b>6</b> · Evaluation</td><td><code>python avalia_respostas_rag.py</code></td><td><code>correto</code> field in each answer<br>summary in the terminal</td></tr>
+<tr><td><b>7</b> · Charts</td><td><code>python plota_histogramas.py</code></td><td><code>histogramas_modelos.pdf</code><br><code>resumo_modelos.csv</code></td></tr>
 </table>
 
 <details>
-<summary><b>🔁 Retomada e tratamento de erros de API</b></summary>
+<summary><b>🔁 Resuming and API error handling</b></summary>
 
 <br>
 
-Os três notebooks **podem ser interrompidos e retomados**. Ao rodar de novo, eles reaproveitam o que já foi feito e processam só o restante.
+All three notebooks **can be interrupted and resumed**. When run again, they reuse what has already been done and process only the remainder.
 
-- Toda chamada de API que falha é repetida **até 3 vezes**, com espera crescente (5 s, 10 s).
-- Se todas as tentativas falharem, a resposta é gravada como `erro_api: <motivo>` e não vai para a extração.
-- **Basta rodar a célula de novo**: apenas as respostas com `erro_api` são refeitas.
-- Na avaliação, `erro_api` é uma categoria à parte. Não conta como resposta errada nem entra nos percentuais.
+- Every failed API call is retried **up to 3 times**, with increasing wait times (5 s, 10 s).
+- If all attempts fail, the answer is saved as `erro_api: <reason>` and is not sent to extraction.
+- **Just run the cell again**: only answers marked `erro_api` are redone.
+- In the evaluation, `erro_api` is a separate category. It does not count as a wrong answer and is excluded from the percentages.
 
-Para começar do zero, apague o arquivo de saída do notebook correspondente.
+To start from scratch, delete the output file of the corresponding notebook.
 
 </details>
 
 <details>
-<summary><b>➕ Adicionando novos resultados à comparação</b></summary>
+<summary><b>➕ Adding new results to the comparison</b></summary>
 
 <br>
 
-Inclua o arquivo na lista `ARQUIVOS_ENTRADA` do `junta_resultados.py`:
+Add the file to the `ARQUIVOS_ENTRADA` list in `junta_resultados.py`:
 
 ```python
 ARQUIVOS_ENTRADA = [
     "resultados_sem_rag.json",
     "resultados_rag_phi-4-mini_v3_extraido.json",
     "resultados_rag_gemini-2.5-flash_v3_extraido.json",
-    "resultados_rag_novo-modelo_v3_extraido.json",   # ← novo
+    "resultados_rag_novo-modelo_v3_extraido.json",   # ← new
 ]
 ```
 
-O script também lê arquivos gerados por versões anteriores dos notebooks. Ele identifica a categoria pelo nome do modelo ou do arquivo (ex.: `..._com-instrucao.json`).
+The script also reads files produced by earlier versions of the notebooks. It identifies the category from the model name or the file name (e.g., `..._com-instrucao.json`).
 
 </details>
 
 ---
 
-## ✅ Critério de avaliação
+## ✅ Evaluation criteria
 
-Todas as categorias e todos os scripts usam **o mesmo critério**, definido na função `classificar_resposta()` de `avalia_respostas_rag.py`:
+All categories and all scripts use **the same criterion**, defined in the `classificar_resposta()` function of `avalia_respostas_rag.py`:
 
 ```mermaid
 flowchart LR
-    R["valor extraído"] --> E{"erro de API?"}
-    E -- sim --> X["⚠️ erro_api"]
-    E -- não --> N{"'não sei'?"}
-    N -- sim --> NS["🤷 nao_sei"]
-    N -- não --> G{"é grandeza<br/>ou número?"}
-    G -- sim --> P["📏 compara com Pint"]
-    G -- não --> T["🔤 compara texto normalizado"]
+    R["extracted value"] --> E{"API error?"}
+    E -- yes --> X["⚠️ erro_api"]
+    E -- no --> N{"'não sei'<br/>(I don't know)?"}
+    N -- yes --> NS["🤷 nao_sei"]
+    N -- no --> G{"quantity<br/>or number?"}
+    G -- yes --> P["📏 compare with Pint"]
+    G -- no --> T["🔤 compare normalized text"]
     P --> V["✔️ True / ✖️ False"]
     T --> V
 ```
 
-| Tipo | Comparação | Exemplos considerados **iguais** |
+| Type | Comparison | Examples considered **equal** |
 |---|---|---|
-| 🔢 Memória e clock | Biblioteca [Pint](https://pint.readthedocs.io), com conversão de unidades | `1MB` = `1024KB` · `72MHz` = `0.072GHz` · `3,5KB` = `3.5 KB` |
-| 🔢 Número de I/O | Pint (valor adimensional) | `37` = `37.0` |
-| ✅ Sim / Não | Texto sem acentos, maiúsculas e pontuação | `Não` = `NAO` = `não.` |
+| 🔢 Memory and clock | [Pint](https://pint.readthedocs.io) library, with unit conversion | `1MB` = `1024KB` · `72MHz` = `0.072GHz` · `3,5KB` = `3.5 KB` |
+| 🔢 I/O count | Pint (dimensionless value) | `37` = `37.0` |
+| ✅ Yes / No | Text without accents, case, or punctuation | `Não` = `NAO` = `não.` |
 
-> Memória usa unidades **binárias** (1 KB = 1024 B), como nos datasheets.
+> Memory uses **binary** units (1 KB = 1024 B), as in the datasheets.
 
 ---
 
-## 📦 Formato dos resultados
+## 📦 Output format
 
 <details>
-<summary><b>Exemplo de um item de <code>dados_combinados_v3.json</code></b></summary>
+<summary><b>Example of an item in <code>dados_combinados_v3.json</code></b></summary>
 
 <br>
 
@@ -264,7 +265,7 @@ flowchart LR
 }
 ```
 
-O campo `correto` pode ser `true`, `false`, `"nao_sei"` ou `"erro_api"`.
+The `correto` field can be `true`, `false`, `"nao_sei"`, or `"erro_api"`.
 
 </details>
 
@@ -272,6 +273,6 @@ O campo `correto` pode ser `true`, `false`, `"nao_sei"` ou `"erro_api"`.
 
 <div align="center">
 
-<sub>Os datasheets pertencem aos seus respectivos fabricantes e são disponibilizados apenas para reprodução da pesquisa.</sub>
+<sub>The datasheets belong to their respective manufacturers and are provided solely for reproducing this research.</sub>
 
 </div>
